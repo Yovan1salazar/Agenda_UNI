@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AGENDA UNI</title>
+    <style>
+        :root {
+            --color-primario: #004b8d;
+            --color-secundario: #ffb347;
+            --color-fondo: #f7f9fc;
+            --color-tarjeta: #ffffff;
+            --color-borde: #dde3f0;
+            --color-texto: #1e293b;
+            --color-suave-1: #e0f2fe;
+            --color-suave-2: #fef3c7;
+            --color-suave-3: #f3e8ff;
+            --color-suave-4: #dcfce7;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: var(--color-fondo);
+            color: var(--color-texto);
+            line-height: 1.5;
+        }
+
+        header {
+            background: linear-gradient(120deg, var(--color-primario), #006bbd);
+            color: #fff;
+            padding: 1.5rem 1rem 1rem;
+            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.25);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .header-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .app-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+        .app-subtitle {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        nav {
+            margin-top: 0.75rem;
+        }
+
+        .nav-list {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .nav-list a {
+            text-decoration: none;
+            color: #e5f3ff;
+            padding: 0.45rem 0.9rem;
+            border-radius: 999px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            background: rgba(15, 23, 42, 0.15);
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .nav-list a:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
+        }
+
+        main {
+            max-width: 1100px;
+            margin: 1.5rem auto 2rem;
+            padding: 0 1rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        section {
+            background: var(--color-tarjeta);
+            border-radius: 1rem;
+            padding: 1.25rem 1.4rem 1.5rem;
+            border: 1px solid var(--color-borde);
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+        }
+
+        section h2 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--color-primario);
+        }
+
+        section p.desc {
+            font-size: 0.9rem;
+            color: #475569;
+            margin-bottom: 0.9rem;
+        }
+
+        /* Calendario */
+        .calendario-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+
+        .dia-card {
+            border-radius: 0.9rem;
+            padding: 0.9rem;
+            border: 1px solid var(--color-borde);
+            background: #f9fafb;
+        }
+
+        .dia-card:nth-child(1) { background: var(--color-suave-1); }
+        .dia-card:nth-child(2) { background: var(--color-suave-2); }
+        .dia-card:nth-child(3) { background: var(--color-suave-3); }
+        .dia-card:nth-child(4) { background: var(--color-suave-4); }
+        .dia-card:nth-child(5) { background: var(--color-suave-1); }
+        .dia-card:nth-child(6) { background: var(--color-suave-2); }
+
+        .dia-titulo {
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+
+        .clase-item {
+            font-size: 0.85rem;
+            padding: 0.35rem 0.4rem;
+            border-radius: 0.6rem;
+            background: rgba(255, 255, 255, 0.8);
+            margin-bottom: 0.25rem;
+            border: 1px solid rgba(148, 163, 184, 0.4);
+        }
+
+        .clase-item span {
+            display: block;
+        }
+
+        .clase-hora {
+            font-weight: 600;
+        }
+
+        .clase-curso {
+            font-weight: 500;
+        }
+
+        /* Tareas */
+        .tareas-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.4fr);
+            gap: 1.25rem;
+        }
+
+        @media (max-width: 800px) {
+            .tareas-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        form.tarea-form {
+            display: grid;
+            gap: 0.6rem;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        label {
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        select,
+        textarea {
+            border-radius: 0.5rem;
+            border: 1px solid var(--color-borde);
+            padding: 0.45rem 0.5rem;
+            font-size: 0.9rem;
+            font-family: inherit;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .btn-principal {
+            margin-top: 0.3rem;
+            padding: 0.55rem 1rem;
+            border-radius: 999px;
+            border: none;
+            background: var(--color-primario);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .btn-principal:hover {
+            background: #003869;
+        }
+
+        .tareas-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .tarea-card {
+            border-radius: 0.8rem;
+            padding: 0.6rem 0.7rem;
+            border: 1px solid var(--color-borde);
+            background: #f9fafb;
+        }
+
+        .tarea-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .tarea-titulo {
+            font-weight: 600;
+        }
+
+        .badge {
+            padding: 0.15rem 0.45rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-curso {
+            background: #e5e7eb;
+            color: #4b5563;
+        }
+
+        .badge-prioridad-alta { background: #fee2e2; color: #b91c1c; }
+        .badge-prioridad-media { background: #fef3c7; color: #92400e; }
+        .badge-prioridad-baja { background: #dcfce7; color: #166534; }
+
+        .badge-estado-pendiente { background: #e0f2fe; color: #075985; }
+        .badge-estado-proceso { background: #ede9fe; color: #5b21b6; }
+        .badge-estado-completado { background: #dcfce7; color: #166534; }
+
+        .tarea-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Notificaciones */
+        .recordatorios-lista {
+            list-style: none;
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .recordatorio-item {
+            padding: 0.45rem 0.6rem;
+            border-radius: 0.6rem;
+            background: #f9fafb;
+            border: 1px dashed var(--color-borde);
+        }
+
+        .nota-appinventor {
+            margin-top: 0.8rem;
+            font-size: 0.85rem;
+            color: #475569;
+            background: #eff6ff;
+            border-left: 3px solid var(--color-primario);
+            padding: 0.5rem 0.6rem;
+            border-radius: 0.5rem;
+        }
+
+        /* Biblioteca UC */
+        .biblioteca-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 1rem;
+        }
+
+        .recurso-card {
+            border-radius: 0.9rem;
+            padding: 0.9rem;
+            border: 1px solid var(--color-borde);
+            background: #f9fafb;
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+        }
+
+        .recurso-boton {
+            display: inline-block;
+            text-decoration: none;
+            text-align: center;
+            padding: 0.6rem 0.9rem;
+            border-radius: 999px;
+            background: var(--color-secundario);
+            color: #3b2300;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .recurso-boton:hover {
+            background: #ff9f1c;
+        }
+
+        .recurso-desc {
+            font-size: 0.85rem;
+            color: #475569;
+        }
+
+        /* Cachimbos */
+        .cachimbos-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+            gap: 1.25rem;
+        }
+
+        @media (max-width: 900px) {
+            .cachimbos-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .tips-lista {
+            list-style: none;
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .tips-lista li::before {
+            content: "•";
+            color: var(--color-primario);
+            font-weight: 900;
+            margin-right: 0.4rem;
+        }
+
+        .horario-card {
+            border-radius: 0.9rem;
+            padding: 0.8rem 0.9rem;
+            border: 1px solid var(--color-borde);
+            background: #f9fafb;
+            font-size: 0.9rem;
+        }
+
+        .horario-titulo {
+            font-weight: 600;
+            margin-bottom: 0.35rem;
+        }
+
+        .enlaces-rapidos {
+            margin-top: 0.6rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        .enlace-chip {
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 0.3rem 0.7rem;
+            border-radius: 999px;
+            border: 1px solid var(--color-borde);
+            color: var(--color-primario);
+            background: #eff6ff;
+        }
+
+        footer {
+            max-width: 1100px;
+            margin: 0 auto 1.5rem;
+            padding: 0 1rem;
+            font-size: 0.8rem;
+            color: #64748b;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div>
+                <div class="app-title">AGENDA UNI</div>
+                <div class="app-subtitle">Agenda Uni + Biblioteca UC · Organización para cachimbos</div>
+            </div>
+            <nav>
+                <ul class="nav-list">
+                    <li><a href="#calendario">Calendario</a></li>
+                    <li><a href="#tareas">Tareas y proyectos</a></li>
+                    <li><a href="#notificaciones">Notificaciones</a></li>
+                    <li><a href="#biblioteca">Biblioteca UC</a></li>
+                    <li><a href="#cachimbos">Ayuda cachimbos</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- 2. Sección Calendario de cursos -->
+        <section id="calendario">
+            <h2>Calendario de cursos</h2>
+            <p class="desc">Vista rápida de tus clases por día. Usa esta estructura luego como base para tu calendario en AppInventor.</p>
+            <div class="calendario-grid">
+                <div class="dia-card">
+                    <div class="dia-titulo">Lunes</div>
+                    <div class="clase-item">
+                        <span class="clase-hora">08:00 - 10:00</span>
+                        <span class="clase-curso">Cálculo I · Aula B-203 · Docente: Ing. Pérez</span>
+                    </div>
+                    <div class="clase-item">
+                        <span class="clase-hora">10:00 - 12:00</span>
+                        <span class="clase-curso">Comunicación I · Aula C-105 · Docente: Lic. Ramos</span>
+                    </div>
+                </div>
+
+                <div class="dia-card">
+                    <div class="dia-titulo">Martes</div>
+                    <div class="clase-item">
+                        <span class="clase-hora">09:00 - 11:00</span>
+                        <span class="clase-curso">Física I · Laboratorio L-2 · Docente: Dr. Flores</span>
+                    </div>
+                    <div class="clase-item">
+                        <span class="clase-hora">11:00 - 13:00</span>
+                        <span class="clase-curso">Introducción a la Universidad · Aula A-101 · Docente: Mg. Soto</span>
+                    </div>
+                </div>
+
+                <div class="dia-card">
+                    <div class="dia-titulo">Miércoles</div>
+                    <div class="clase-item">
+                        <span class="clase-hora">08:00 - 10:00</span>
+                        <span class="clase-curso">Álgebra · Aula B-105 · Docente: Ing. Gutiérrez</span>
+                    </div>
+                </div>
+
+                <div class="dia-card">
+                    <div class="dia-titulo">Jueves</div>
+                    <div class="clase-item">
+                        <span class="clase-hora">09:00 - 11:00</span>
+                        <span class="clase-curso">Química · Laboratorio Q-1 · Docente: Q.F. Medina</span>
+                    </div>
+                    <div class="clase-item">
+                        <span class="clase-hora">11:00 - 13:00</span>
+                        <span class="clase-curso">Taller de Habilidades Blandas · Aula C-204 · Docente: Psic. Vega</span>
+                    </div>
+                </div>
+
+                <div class="dia-card">
+                    <div class="dia-titulo">Viernes</div>
+                    <div class="clase-item">
+                        <span class="clase-hora">08:00 - 10:00</span>
+                        <span class="clase-curso">Cálculo I (Práctica) · Aula B-305 · Docente: Ing. Pérez</span>
+                    </div>
+                </div>
+
+                <div class="dia-card">
+                    <div class="dia-titulo">Sábado</div>
+                    <div class="clase-item">
+                        <span class="clase-hora">09:00 - 11:00</span>
+                        <span class="clase-curso">Tutoría académica · Aula A-102 · Tutor: Mg. López</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Sección Tareas, solicitudes y proyectos -->
+        <section id="tareas">
+            <h2>Tareas, solicitudes y proyectos</h2>
+            <p class="desc">Registra tus pendientes importantes. Más adelante, esta sección puede conectarse con bases de datos o notificaciones en tu app.</p>
+
+            <div class="tareas-layout">
+                <div>
+                    <h3 style="font-size:1rem; margin-bottom:0.4rem;">Agregar nueva tarea</h3>
+                    <form class="tarea-form">
+                        <div class="form-group">
+                            <label for="titulo">Título</label>
+                            <input type="text" id="titulo" placeholder="Ej. Informe de laboratorio 1" />
+                        </div>
+                        <div class="form-group">
+                            <label for="curso">Curso</label>
+                            <input type="text" id="curso" placeholder="Ej. Física I" />
+                        </div>
+                        <div class="form-group">
+                            <label for="tipo">Tipo</label>
+                            <select id="tipo">
+                                <option>Tarea</option>
+                                <option>Solicitud</option>
+                                <option>Proyecto</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="fecha">Fecha de entrega</label>
+                            <input type="date" id="fecha" />
+                        </div>
+                        <div class="form-group">
+                            <label for="prioridad">Prioridad</label>
+                            <select id="prioridad">
+                                <option>Alta</option>
+                                <option>Media</option>
+                                <option>Baja</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="descripcion">Descripción</label>
+                            <textarea id="descripcion" placeholder="Breve detalle de la tarea o indicaciones del docente"></textarea>
+                        </div>
+                        <button type="button" class="btn-principal">Guardar (ejemplo estático)</button>
+                    </form>
+                </div>
+
+                <div>
+                    <h3 style="font-size:1rem; margin-bottom:0.4rem;">Tareas de ejemplo</h3>
+                    <div class="tareas-lista">
+                        <article class="tarea-card">
+                            <div class="tarea-header">
+                                <span class="tarea-titulo">Informe de laboratorio 1</span>
+                                <span class="badge badge-prioridad-alta">Prioridad alta</span>
+                            </div>
+                            <div class="tarea-meta">
+                                <span class="badge badge-curso">Física I</span>
+                                <span class="badge badge-estado-pendiente">Pendiente</span>
+                                <span>Entrega: 05/04</span>
+                            </div>
+                        </article>
+
+                        <article class="tarea-card">
+                            <div class="tarea-header">
+                                <span class="tarea-titulo">Solicitud de constancia de estudios</span>
+                                <span class="badge badge-prioridad-media">Prioridad media</span>
+                            </div>
+                            <div class="tarea-meta">
+                                <span class="badge badge-curso">Trámite académico</span>
+                                <span class="badge badge-estado-proceso">En proceso</span>
+                                <span>Entrega: 10/04</span>
+                            </div>
+                        </article>
+
+                        <article class="tarea-card">
+                            <div class="tarea-header">
+                                <span class="tarea-titulo">Proyecto: App Agenda UNI (prototipo)</span>
+                                <span class="badge badge-prioridad-baja">Prioridad baja</span>
+                            </div>
+                            <div class="tarea-meta">
+                                <span class="badge badge-curso">Proyecto personal</span>
+                                <span class="badge badge-estado-completado">Completado</span>
+                                <span>Entrega: 01/04</span>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Sección Notificaciones y recordatorios -->
+        <section id="notificaciones">
+            <h2>Notificaciones y recordatorios</h2>
+            <p class="desc">Ejemplo de recordatorios sugeridos. En la versión AppInventor, estos eventos se pueden convertir en notificaciones reales.</p>
+
+            <ul class="recordatorios-lista">
+                <li class="recordatorio-item">
+                    <strong>1 semana antes</strong>: revisar avance del proyecto, verificar entregables y coordinar con el equipo.
+                </li>
+                <li class="recordatorio-item">
+                    <strong>3 días antes</strong>: terminar el borrador, corregir errores y subir versión casi final.
+                </li>
+                <li class="recordatorio-item">
+                    <strong>1 día antes</strong>: repasar el trabajo, confirmar envío en la plataforma y hacer captura de pantalla de la constancia.
+                </li>
+            </ul>
+
+            <div class="nota-appinventor">
+                En la app creada con AppInventor, estos recordatorios se podrán programar como
+                <strong>notificaciones</strong> que aparecerán en tu celular antes de la fecha límite.
+            </div>
+        </section>
+
+        <!-- 5. Sección Biblioteca UC -->
+        <section id="biblioteca">
+            <h2>Biblioteca UC</h2>
+            <p class="desc">Acceso rápido a los recursos digitales de la biblioteca de la Universidad Continental.</p>
+
+            <div class="biblioteca-grid">
+                <article class="recurso-card">
+                    <a class="recurso-boton" href="https://hubinformacion.continental.edu.pe/biblioteca-virtual/" target="_blank" rel="noopener noreferrer">
+                        Biblioteca Virtual – Hub de Información
+                    </a>
+                    <p class="recurso-desc">
+                        Busca libros, artículos, bases de datos y recursos especializados para tus cursos. Es el punto de partida para cualquier investigación.
+                    </p>
+                </article>
+
+                <article class="recurso-card">
+                    <a class="recurso-boton" href="#" target="_blank" rel="noopener noreferrer">
+                        Libros digitales (Portal del estudiante)
+                    </a>
+                    <p class="recurso-desc">
+                        Ingresa con tu usuario del portal del estudiante para revisar libros digitales recomendados para tus cursos del ciclo.
+                    </p>
+                </article>
+
+                <article class="recurso-card">
+                    <a class="recurso-boton" href="https://repositorio.continental.edu.pe" target="_blank" rel="noopener noreferrer">
+                        Repositorio Continental (Tesis y trabajos)
+                    </a>
+                    <p class="recurso-desc">
+                        Explora tesis, trabajos de investigación y proyectos de estudiantes y docentes de la Universidad Continental.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <!-- 6. Sección especial para cachimbos -->
+        <section id="cachimbos">
+            <h2>Guía para cachimbos</h2>
+            <p class="desc">Consejos rápidos para sobrevivir al primer ciclo usando AGENDA UNI y los recursos de la universidad.</p>
+
+            <div class="cachimbos-grid">
+                <div>
+                    <h3 style="font-size:1rem; margin-bottom:0.4rem;">Consejos rápidos</h3>
+                    <ul class="tips-lista">
+                        <li>Usa el <strong>calendario</strong> para anotar tus horarios de clase por día. Así evitas confundir aulas y horas.</li>
+                        <li>Registra tus <strong>tareas y proyectos</strong> apenas el docente los mencione. No confíes solo en tu memoria.</li>
+                        <li>Entra a la <strong>Biblioteca Virtual</strong> con tu correo institucional para acceder a libros y artículos gratis.</li>
+                        <li>Revisa tu <strong>correo institucional</strong> a diario: ahí llegan avisos de docentes, coordinadores y trámites.</li>
+                        <li>Divide las entregas grandes en pasos pequeños y usa recordatorios (1 semana, 3 días, 1 día antes).</li>
+                    </ul>
+
+                    <div class="enlaces-rapidos">
+                        <a class="enlace-chip" href="#calendario">Ver calendario ejemplo</a>
+                        <a class="enlace-chip" href="#tareas">Ver tareas ejemplo</a>
+                        <a class="enlace-chip" href="#biblioteca">Ir a Biblioteca UC</a>
+                    </div>
+                </div>
+
+                <div class="horario-card">
+                    <div class="horario-titulo">Ejemplo de horario tipo (primer ciclo)</div>
+                    <p>
+                        Lunes a viernes: 2 a 3 cursos por día (mañana o tarde). Sábado: tutorías o refuerzo.
+                        Deja bloques libres para:
+                    </p>
+                    <ul style="margin-top:0.4rem; padding-left:1.1rem; font-size:0.9rem;">
+                        <li>Revisar apuntes del día.</li>
+                        <li>Adelantar lecturas de la Biblioteca Virtual.</li>
+                        <li>Reuniones de proyectos y laboratorios.</li>
+                    </ul>
+                    <p style="margin-top:0.4rem;">
+                        Usa AGENDA UNI para marcar estos espacios y no sobrecargarte la noche anterior a la entrega.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        AGENDA UNI · Prototipo HTML estático para presentación y futura implementación en AppInventor.
+    </footer>
+</body>
+</html>
